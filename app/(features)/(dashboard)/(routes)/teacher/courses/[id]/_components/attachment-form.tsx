@@ -23,6 +23,7 @@ interface AttachmentFormProps {
     initialData: Course & { attachmets: Attachment[] };
     courseId: string;
 }
+//@ts-ignore
 const formSchema = z.object({
     url: z.string().min(1),
 });

@@ -36,7 +36,7 @@ export const VideoPlayer = ({ playbackId, courseId, chapterId, nextChapterId, is
                     router.push(`/course/${courseId}/chapters/${nextChapterId}`)
                 }
             }
-        } catch (error) {
+        } catch {
             toast.error("Something went wrong");
         }
     }

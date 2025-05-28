@@ -2,7 +2,7 @@
 
 import { Chapter } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { cn } from "@/lib/utils"
 import { Grip, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,6 @@ interface ChapterListProps {
 
 export const ChapterList = ({
     onEdit,
-    onRecorder,
     items
 }: ChapterListProps) => {
     const [isMounted, setIsMounted] = useState(false);
@@ -33,28 +32,28 @@ export const ChapterList = ({
         return null;
     }
 
-    const onDragEnd = (result: DropResult) => {
-        if (!result.destination) return
+    // const onDragEnd = (result: DropResult) => {
+    //     if (!result.destination) return
 
-        const items = Array.from(chapters);
-        const [recorderedItem] = items.splice(result.source.index, 1);
-        items.splice(result.destination.index, 0, recorderedItem);
+    //     const items = Array.from(chapters);
+    //     const [recorderedItem] = items.splice(result.source.index, 1);
+    //     items.splice(result.destination.index, 0, recorderedItem);
 
-        const startIndex = Math.min(result.source.index, result.destination.index);
-        const endIndex = Math.max(result.source.index, result.destination.index);
+    //     const startIndex = Math.min(result.source.index, result.destination.index);
+    //     const endIndex = Math.max(result.source.index, result.destination.index);
 
-        const updatedChapters = items.slice(startIndex, endIndex + 1);
-        setChapters(items);
+    //     const updatedChapters = items.slice(startIndex, endIndex + 1);
+    //     setChapters(items);
 
-        const bulkUpdateData = updatedChapters.map((chapter) => ({
-            id: chapter.id,
-            position: items.findIndex((item) => {
-                item.id === chapter.id
-            })
-        }))
+    //     const bulkUpdateData = updatedChapters.map((chapter) => ({
+    //         id: chapter.id,
+    //         position: items.findIndex((item) => {
+    //             item.id === chapter.id
+    //         })
+    //     }))
 
-        onRecorder(bulkUpdateData)
-    }
+    //     onRecorder(bulkUpdateData)
+    // }
 
     return (
         <DragDropContext onDragEnd={() => { }}>

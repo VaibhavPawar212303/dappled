@@ -15,6 +15,7 @@ interface ImageFormProps {
     initialData: Course;
     courseId: string;
 }
+//@ts-ignore
 const formSchema = z.object({
     imageUrl: z.string().min(1, {
         message: "Image is required",

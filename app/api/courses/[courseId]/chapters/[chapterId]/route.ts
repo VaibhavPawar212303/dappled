@@ -82,6 +82,7 @@ export async function PATCH(
 ) {
     try {
         const { userId } = await auth();
+        //@ts-ignore
         const { isPublished, ...values } = await req.json();
         if (!userId) {
             return new NextResponse("Unauthorized", { status: 401 });
@@ -116,7 +117,7 @@ export async function PATCH(
                 await mux.video.assets.delete(existingMuxData.assetId);
                 await db.muxData.delete({ where: { id: existingMuxData.id } });
             }
-            //@ts-ignore
+            //@ts-expect-error
             const asset = await mux.video.assets.create({
                 input: values.videourl,
                 playback_policy: ["public"],

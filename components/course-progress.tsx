@@ -7,17 +7,17 @@ interface CourseProgressProps {
     size?: "default" | "sm";
 }
 
-const colorByVariant = {
-    default: "text-sky-700",
-    success: "text-emerald-700"
-}
+// const colorByVariant = {
+//     default: "text-sky-700",
+//     success: "text-emerald-700"
+// }
 
-const sizeByVariant = {
-    default: "text-sm",
-    sm: "text-emerald-700"
-}
+// const sizeByVariant = {
+//     default: "text-sm",
+//     sm: "text-emerald-700"
+// }
 
-export const CourseProgress = ({ value, variant, size }: CourseProgressProps) => {
+export const CourseProgress = ({ value }: CourseProgressProps) => {
     return (
         <div>
             <Progress

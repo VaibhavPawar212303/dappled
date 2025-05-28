@@ -29,7 +29,7 @@ export const CourseProgressButton = ({ chapterId, courseId, isCompleted, nextCha
             }
             toast.success("Progress updated and chapter completed");
             router.refresh();
-        } catch (error) {
+        } catch {
             toast.error("Something went wrong");
         } finally {
             setIsLoading(false);

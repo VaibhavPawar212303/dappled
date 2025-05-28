@@ -16,6 +16,7 @@ interface ChapterVideoProps {
     courseId: string;
     chapterId: string
 }
+//@ts-ignore
 const formSchema = z.object({
     videourl: z.string().min(1),
 });
@@ -80,7 +81,7 @@ export const ChapterVideoForm = ({ initialData, courseId, chapterId }: ChapterVi
                         }}
                     />
                     <div className="text-xs text-muted foreground mt-4">
-                        Upload this chapter's video
+                        Upload this chapter video
                     </div>
                 </div>
             )}
