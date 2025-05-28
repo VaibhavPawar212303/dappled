@@ -21,8 +21,25 @@ interface VideoPlayerProps {
 }
 
 export const VideoPlayer = ({ playbackId, courseId, chapterId, nextChapterId, isLocked, completeOnEnd, title }: VideoPlayerProps) => {
+    const router = useRouter();
     const [isReady, setIsReady] = useState(false);
+    const onEnd = async () => {
+        try {
+            if (completeOnEnd) {
+                await axios.put(`/api/courses/${courseId}/chapters/${chapterId}/progress`, {
+                    isCompleted: true
+                });
+                toast.success("Progress updated");
+                router.refresh();
 
+                if (nextChapterId) {
+                    router.push(`/course/${courseId}/chapters/${nextChapterId}`)
+                }
+            }
+        } catch (error) {
+            toast.error("Something went wrong");
+        }
+    }
     return (
         <div className="relative aspect-video">
             {
@@ -50,7 +67,7 @@ export const VideoPlayer = ({ playbackId, courseId, chapterId, nextChapterId, is
                         title={title}
                         className={cn(!isReady && "hidden")}
                         onCanPlay={() => setIsReady(true)}
-                        onEnded={() => { }}
+                        onEnded={onEnd}
                         autoPlay
                         playbackId={playbackId}
                         metadata={{
