@@ -6,19 +6,16 @@ import Stripe from "stripe";
 
 export async function POST(request: Request, { params }: { params: { courseId: string } }) {
     try {
-
         const user = await currentUser();
         if (!user || !user.id || !user.emailAddresses?.[0]?.emailAddress) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
-
         const course = await db.course.findUnique({
             where: {
                 id: params.courseId,
                 isPublished: true,
             }
         });
-
         const purchase = await db.purchase.findUnique({
             where: {
                 userId_courseId: {
@@ -27,15 +24,12 @@ export async function POST(request: Request, { params }: { params: { courseId: s
                 }
             }
         });
-
         if (purchase) {
             return new NextResponse("Already purchased", { status: 400 });
         }
-
         if (!course) {
             return new NextResponse("Course not found", { status: 404 });
         }
-
         const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
             {
                 quantity: 1,
@@ -49,7 +43,6 @@ export async function POST(request: Request, { params }: { params: { courseId: s
                 }
             }
         ];
-
         let stripeCustomer = await db.stripeCustomer.findUnique({
             where: {
                 userId: user.id,
@@ -58,7 +51,6 @@ export async function POST(request: Request, { params }: { params: { courseId: s
                 stripeCustomerId: true,
             }
         });
-
         if (!stripeCustomer) {
             const customer = await stripe.customers.create({
                 email: user.emailAddresses[0].emailAddress,
@@ -73,7 +65,6 @@ export async function POST(request: Request, { params }: { params: { courseId: s
                 }
             });
         }
-
         const session = await stripe.checkout.sessions.create({
             customer: stripeCustomer.stripeCustomerId,
             line_items,
@@ -84,10 +75,8 @@ export async function POST(request: Request, { params }: { params: { courseId: s
                 userId: user.id,
                 courseId: course.id,
             },
-        })
-
+        });
         return NextResponse.json({ url: session.url });
-
     } catch (error) {
         console.log("[COURSE_ID_CHECKOUT]", error);
         return new NextResponse("Internal server error", { status: 500 });
