@@ -7,6 +7,7 @@ interface GetChapterProps {
     chapterId: string
 }
 
+
 export const getChapter = async ({ userId, courseId, chapterId }: GetChapterProps) => {
     try {
         const purchase = await db.purchase.findUnique({
