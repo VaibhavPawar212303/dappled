@@ -11,20 +11,35 @@ import { CourseProgressButton } from "./_components/course-progress-button";
 
 type ChapterParams = { courseId: string; chapterId: string };
 
+type SearchParams = Record<string, string | string[] | undefined>;
+
 type ChapterPageProps = {
     params?: ChapterParams | Promise<ChapterParams>;
-    searchParams?: any | Promise<any>;
+    searchParams?: SearchParams | Promise<SearchParams>;
 };
+
+// Utility for detecting a promise without using ANY
+function isPromise<T>(value: T | Promise<T>): value is Promise<T> {
+    return (
+        typeof value === "object" &&
+        value !== null &&
+        "then" in value &&
+        typeof (value as any).then === "function"
+    );
+}
 
 export default async function ChapterIdPage({ params }: ChapterPageProps) {
     const { userId } = await auth();
     if (!userId) return redirect("/");
 
-    // 🔥 FIX: Resolve params here
-    const resolvedParams =
-        params && typeof (params as any).then === "function"
-            ? await (params as Promise<ChapterParams>)
-            : (params as ChapterParams);
+    // 🟩 Resolve params without using "any"
+    const resolvedParams = isPromise(params)
+        ? await params
+        : params;
+
+    if (!resolvedParams) {
+        throw new Error("Missing route parameters.");
+    }
 
     const { courseId, chapterId } = resolvedParams;
 
@@ -42,10 +57,7 @@ export default async function ChapterIdPage({ params }: ChapterPageProps) {
         courseId,
     });
 
-    const course =
-        courseData && typeof courseData.then === "function"
-            ? await courseData
-            : courseData;
+    const course = isPromise(courseData) ? await courseData : courseData;
 
     if (!chapter || !course) return redirect("/");
 
