@@ -10,6 +10,7 @@ import {
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Button } from '@/components/ui/button'
+import { ToastProvider } from '@/components/providers/toast-providers'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -48,6 +49,7 @@ export default function RootLayout({
               <UserButton />
             </SignedIn>
           </header>
+          <ToastProvider />
           {children}
         </body>
       </html>
