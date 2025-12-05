@@ -1,29 +1,29 @@
 import { prisma } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function PATCH(req: Request, { params }: { params: { courseId: string } }) {
-    try {
-        const { userId } = await auth();
-        const { courseId } = await params;
-        const values = await req.json();
+export async function PATCH(req: NextRequest, context: { params: Promise<{ courseId: string }> }) {
+  try {
+    const { userId } = await auth();
+    const { courseId } = await context.params; 
 
-        if (!userId) {
-            return new NextResponse("Unauthorized", { status: 401 });
-        }
+    const values = await req.json();
 
-        const course = await prisma.course.update({
-            where: {
-                id: courseId,
-                userId
-            },
-            data: {
-                ...values
-            }
-        });
-        return NextResponse.json(course)
-    } catch (error) {
-        console.log("[COURSE_ID]", error);
-        return new NextResponse("Internal Error")
+    if (!userId) {
+      return new NextResponse("Unauthorized", { status: 401 });
     }
+
+    const course = await prisma.course.update({
+      where: {
+        id: courseId,
+        userId,
+      },
+      data: values,
+    });
+
+    return NextResponse.json(course);
+  } catch (error) {
+    console.error("[COURSE_ID]", error);
+    return new NextResponse("Internal Error");
+  }
 }
