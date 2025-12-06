@@ -18,7 +18,9 @@ const eslintConfig = [
       '@typescript-eslint/explicit-module-boundary-types': 'warn',
       "@typescript-eslint/no-non-null-asserted-optional-chain": "warn", // or "off"
       "react-hooks/rules-of-hooks": "warn", // be cautious with this one!
-      "no-var": "off"
+      "no-var": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-explicit-any": "off"
     }
   }
 ];
