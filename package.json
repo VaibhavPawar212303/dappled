@@ -16,7 +16,6 @@
     "@mux/mux-node": "^11.1.0",
     "@mux/mux-player": "^3.4.0",
     "@mux/mux-player-react": "^3.4.0",
-    "@prisma/client": "^7.1.0",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-checkbox": "^1.3.2",
     "@radix-ui/react-dialog": "^1.1.13",
@@ -37,7 +36,6 @@
     "cmdk": "^1.1.1",
     "lucide-react": "^0.509.0",
     "next": "15.3.2",
-    "prisma": "^6.7.0",
     "query-string": "^9.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -47,7 +45,9 @@
     "stripe": "^18.1.1",
     "tailwind-merge": "^3.2.0",
     "uploadthing": "^7.7.2",
-    "zod": "^3.24.4"
+    "zod": "^3.24.4",
+    "@prisma/client": "latest",
+    "prisma": "latest"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

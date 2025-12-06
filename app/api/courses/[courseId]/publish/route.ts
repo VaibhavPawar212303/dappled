@@ -8,7 +8,7 @@ export async function PATCH(
 ) {
     try {
         const { userId } = await auth();
-        const { courseId } = await params;  // ✅ Await params
+        const { courseId } = await params;
         
         if (!userId) {
             return new NextResponse("Unauthorized", { status: 401 });
@@ -16,7 +16,7 @@ export async function PATCH(
         
         const course = await db.course.findUnique({
             where: {
-                id: courseId,  // ✅ Use courseId
+                id: courseId,
                 userId
             },
             include: {
@@ -32,7 +32,7 @@ export async function PATCH(
             return new NextResponse("Not found", { status: 404 });
         }
         
-        const hasPublishedChapter = course.chapters.some((chapter) => chapter.isPublished);
+        const hasPublishedChapter = course.chapters.some((chapter: typeof course.chapters[number]) => chapter.isPublished);  // ✅ Add explicit type
         
         if (!course.categoryId || !course.title || !course.description || !course.imageUrl || !hasPublishedChapter) {
             return new NextResponse("Missing required fields", { status: 400 });
@@ -40,7 +40,7 @@ export async function PATCH(
         
         const publishedCourse = await db.course.update({
             where: {
-                id: courseId,  // ✅ Use courseId
+                id: courseId,
                 userId
             },
             data: {
