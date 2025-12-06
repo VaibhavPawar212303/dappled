@@ -66,10 +66,10 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
                         initialData={course}
                         courseId={courseId}
                     />
-                    <ImageForm
+                    {/* <ImageForm
                         initialData={course}
                         courseId={courseId}
-                    />
+                    /> */}
                 </div>
             </div>
         </div>

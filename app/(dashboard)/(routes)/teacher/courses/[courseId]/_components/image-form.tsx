@@ -8,7 +8,7 @@ import { useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { FileUpload } from "@/components/file-upload";
+// import { FileUpload } from "@/components/file-upload";
 import { Course } from "@/generated/prisma/client";
 
 interface ImageFormProps {
@@ -76,14 +76,14 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
             )}
             {isEditing && (
                 <div>
-                    <FileUpload
+                    {/* <FileUpload
                         endpoint="courseImage"
                         onChange={(ufsUrl) => {
                             if (ufsUrl) {
                                 onSubmit({ imageUrl: ufsUrl })
                             }
                         }}
-                    />
+                    /> */}
                     <div className="text-xs text-muted foreground mt-4">
                         16:9 aspect ratio recommended
                     </div>
