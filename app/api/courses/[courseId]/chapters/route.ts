@@ -2,9 +2,13 @@ import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request, { params }: { params: { courseId: string } }) {
+export async function POST(
+    req: Request, 
+    { params }: { params: Promise<{ courseId: string }> }
+) {
     try {
         const { userId } = await auth();
+        const { courseId } = await params;  // ✅ Await params
         const { title } = await req.json();
 
         if (!userId) {
@@ -13,7 +17,7 @@ export async function POST(req: Request, { params }: { params: { courseId: strin
 
         const courseOwner = await db.course.findUnique({
             where: {
-                id: params.courseId,
+                id: courseId,  // ✅ Use courseId
                 userId: userId
             }
         });
@@ -24,7 +28,7 @@ export async function POST(req: Request, { params }: { params: { courseId: strin
 
         const lastChapter = await db.chapter.findFirst({
             where: {
-                courseId: params.courseId,
+                courseId: courseId,  // ✅ Use courseId
             },
             orderBy: {
                 position: "desc"
@@ -35,7 +39,7 @@ export async function POST(req: Request, { params }: { params: { courseId: strin
         const chapter = await db.chapter.create({
             data: {
                 title,
-                courseId: params.courseId,
+                courseId: courseId,  // ✅ Use courseId
                 position: newPosition
             }
         });

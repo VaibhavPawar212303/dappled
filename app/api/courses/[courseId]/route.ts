@@ -8,16 +8,21 @@ const mux = new Mux({
     tokenSecret: process.env.MUX_TOKEN_SECRET!,
 });
 
-
-export async function DELETE(req: Request, { params }: { params: { courseId: string; chapterId: string } }) {
+export async function DELETE(
+    req: Request, 
+    { params }: { params: Promise<{ courseId: string }> }
+) {
     try {
         const { userId } = await auth();
+        const { courseId } = await params;  // ✅ Await params
+        
         if (!userId) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
+        
         const course = await db.course.findUnique({
             where: {
-                id: params.courseId,
+                id: courseId,  // ✅ Use courseId
                 userId,
             },
             include: {
@@ -28,6 +33,7 @@ export async function DELETE(req: Request, { params }: { params: { courseId: str
                 }
             }
         });
+        
         if (!course) {
             return new NextResponse("Not Found", { status: 404 });
         }
@@ -40,7 +46,7 @@ export async function DELETE(req: Request, { params }: { params: { courseId: str
 
         const deletedCourse = await db.course.delete({
             where: {
-                id: params.courseId
+                id: courseId  // ✅ Use courseId
             }
         })
 
@@ -51,24 +57,29 @@ export async function DELETE(req: Request, { params }: { params: { courseId: str
     }
 }
 
-
-export async function PATCH(req: Request, { params }: { params: { courseId: string } }) {
+export async function PATCH(
+    req: Request, 
+    { params }: { params: Promise<{ courseId: string }> }
+) {
     try {
         const { userId } = await auth();
-        const { courseId } = await params;
+        const { courseId } = await params;  // ✅ Await params
         const values = await req.json();
+        
         if (!userId) {
             return new NextResponse('Unauthorized', { status: 401 });
         }
+        
         const course = await db.course.update({
             where: {
-                id: courseId,
+                id: courseId,  // ✅ Use courseId
                 userId
             },
             data: {
                 ...values
             }
         })
+        
         return NextResponse.json(course);
     } catch (error) {
         console.log("[COURSE_ID]", error);

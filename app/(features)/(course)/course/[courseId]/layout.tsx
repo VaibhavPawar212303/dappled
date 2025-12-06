@@ -5,14 +5,23 @@ import { redirect } from "next/navigation";
 import { CourseSidebar } from "./_components/course-sidebar";
 import { CourseNavbar } from "./_components/course-navbar";
 
-const CourseLayout = async ({ children, params }: { children: React.ReactNode; params: { courseId: string } }) => {
+const CourseLayout = async ({ 
+  children, 
+  params 
+}: { 
+  children: React.ReactNode
+  params: Promise<{ courseId: string }>  // ✅ Make it a Promise
+}) => {
     const { userId } = await auth();
+    const { courseId } = await params;  // ✅ Await params
+    
     if (!userId) {
         return redirect('/');
     }
+    
     const course = await db.course.findUnique({
         where: {
-            id: params.courseId
+            id: courseId
         },
         include: {
             chapters: {
@@ -38,7 +47,6 @@ const CourseLayout = async ({ children, params }: { children: React.ReactNode; p
     }
 
     const progressCount = await getProgress(userId, course.id)
-
 
     return (
         <div className="h-full">

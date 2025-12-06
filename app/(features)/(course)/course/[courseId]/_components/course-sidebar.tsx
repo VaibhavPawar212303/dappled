@@ -29,8 +29,6 @@ export const CourseSidebar = async ({ course, progressCount }: CourseSidebarProp
         }
     });
 
-
-
     return (
         <div className="h-full border-r flex flex-col overflow-y-auto shadow-sm">
             <div className="p-8 flex flex-col border-b ">
@@ -50,7 +48,7 @@ export const CourseSidebar = async ({ course, progressCount }: CourseSidebarProp
             </div>
             <div className="flex flex-col w-full">
                 {
-                    course.chapters.map((chapter) => <CourseSidebarItem
+                    course.chapters.map((chapter: typeof course.chapters[number]) => <CourseSidebarItem  // ✅ Add explicit type
                         key={chapter.id}
                         id={chapter.id}
                         label={chapter.title}

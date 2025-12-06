@@ -10,13 +10,14 @@ import { File } from "lucide-react";
 import { CourseProgressButton } from "./_components/course-progress-button";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     courseId: string;
     chapterId: string;
-  };
+  }>;
 }
 
 const ChapterIdPage = async ({ params }: PageProps) => {
+  const { courseId, chapterId } = await params;
   const { userId } = await auth();
   if (!userId) {
     return redirect("/");
@@ -32,8 +33,8 @@ const ChapterIdPage = async ({ params }: PageProps) => {
     purchase,
   } = await getChapter({
     userId,
-    chapterId: params.chapterId,
-    courseId: params.courseId,
+    chapterId: courseId,
+    courseId: chapterId,
   });
 
   const course =
@@ -65,9 +66,9 @@ const ChapterIdPage = async ({ params }: PageProps) => {
       <div className="flex flex-col max-w-4xl ms-auto pb-20">
         <div className="p-4">
           <VideoPlayer
-            chapterId={params.chapterId}
+            chapterId={chapterId}
             title={chapter.title}
-            courseId={params.courseId}
+            courseId={courseId}
             nextChapterId={nextChapter?.id}
             playbackId={muxData?.playbackId!}
             isLocked={isLocked}
@@ -79,14 +80,14 @@ const ChapterIdPage = async ({ params }: PageProps) => {
             <h2 className="text-2xl font-semibold mb-2">{chapter.title}</h2>
             {purchase ? (
               <CourseProgressButton
-                chapterId={params.chapterId}
-                courseId={params.courseId}
+                chapterId={chapterId}
+                courseId={courseId}
                 nextChapterId={nextChapter?.id}
                 isCompleted={!!userProgress?.isCompleted}
               />
             ) : (
               <CourseEnrollButton
-                courseId={params.courseId}
+                courseId={courseId}
                 // @ts-ignore
                 price={course.price!}
               />

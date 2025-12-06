@@ -1,10 +1,12 @@
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 
-const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
+const CourseIdPage = async ({ params }: { params: Promise<{ courseId: string }> }) => {
+    const { courseId } = await params;  // ✅ Await params
+    
     const course = await db.course.findUnique({
         where: {
-            id: params.courseId
+            id: courseId  // ✅ Use courseId
         },
         include: {
             chapters: {
@@ -17,9 +19,11 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
             },
         }
     });
+    
     if (!course) {
         return redirect('/');
     }
+    
     return redirect(`/course/${course.id}/chapters/${course.chapters[0].id}`)
 }
 

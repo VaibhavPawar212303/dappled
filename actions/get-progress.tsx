@@ -11,7 +11,9 @@ export const getProgress = async (userId: string, courseId: string): Promise<num
                 id: true
             }
         });
-        const publishedChapterIds = publishedChapters.map((chapter) => chapter.id);
+        
+        const publishedChapterIds = publishedChapters.map((chapter: typeof publishedChapters[number]) => chapter.id);  // ✅ Add explicit type
+        
         const validCompletedChapters = await db.userProgress.count({
             where: {
                 userId: userId,
@@ -21,6 +23,7 @@ export const getProgress = async (userId: string, courseId: string): Promise<num
                 isCompleted: true
             }
         });
+        
         const progressPercentage = (validCompletedChapters / publishedChapterIds.length) * 100;
         return progressPercentage;
     } catch (error) {

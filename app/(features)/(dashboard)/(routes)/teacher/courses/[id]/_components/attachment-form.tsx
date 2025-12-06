@@ -58,6 +58,7 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
             setDeletingId(null)
         }
     }
+    
     return (
         <div className="mt-6 border bg-slate-100 rounded-md p-4">
             <div className="font-medium flex items-center justify-between">
@@ -81,7 +82,7 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
                     )}{
                         initialData.attachmets.length > 0 && (
                             <div className="space-y-2">
-                                {initialData.attachmets.map((attachment) => (
+                                {initialData.attachmets.map((attachment: Attachment) => (  // ✅ Add explicit type
                                     <div key={attachment.id}
                                         className="flex items-center p-3 w-full bg-sky-100 border-sky-200 border text-sky-700 rounded-md"
                                     >
@@ -122,4 +123,3 @@ export const AttachmentForm = ({ initialData, courseId }: AttachmentFormProps) =
         </div>
     )
 }
-

@@ -14,14 +14,17 @@ import { Banner } from "@/components/banner";
 import { Actions } from "./_components/actions";
 
 
-const CourseIdpage = async ({ params }: { params: { id: string } }) => {
+const CourseIdpage = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { userId } = await auth();
+    const { id } = await params;  // ✅ Await params
+    
     if (!userId) {
         return redirect('/')
     }
+    
     const course = await db.course.findUnique({
         where: {
-            id: params.id,
+            id: id,  // ✅ Use id
             userId
         },
         include: {
@@ -37,21 +40,24 @@ const CourseIdpage = async ({ params }: { params: { id: string } }) => {
             }
         }
     });
+    
     const categories = await db.category.findMany({
         orderBy: {
             name: "asc"
         },
     });
+    
     if (!course) {
         return redirect('/');
     }
+    
     const requiredFields = [
         course.title,
         course.description,
         course.imageUrl,
         course.price,
         course.categoryId,
-        course.chapters.some(chapter => chapter.isPublished),
+        course.chapters.some((chapter: { isPublished: any; }) => chapter.isPublished),
     ]
 
     const totalFields = requiredFields.length;
@@ -77,7 +83,7 @@ const CourseIdpage = async ({ params }: { params: { id: string } }) => {
                     </div>
                     <Actions
                         disabled={!isComplete}
-                        courseId={params.id}
+                        courseId={id}  // ✅ Use id
                         isPublished={course.isPublished}
                     />
                 </div>
@@ -104,7 +110,7 @@ const CourseIdpage = async ({ params }: { params: { id: string } }) => {
                         <CategoryForm
                             initialData={course}
                             courseId={course.id}
-                            options={categories.map((category) => ({
+                            options={categories.map((category: { name: any; id: any; }) => ({
                                 label: category.name,
                                 value: category.id
                             }))}
