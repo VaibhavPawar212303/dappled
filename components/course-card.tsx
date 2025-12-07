@@ -12,10 +12,10 @@ interface CourseCardProps {
     chapterLength: number,
     price: number,
     progress: number | null
-    // category: string
+    category: string
 }
 
-export const CourseCard = ({ id, title, imageUrl, chapterLength, price, progress }: CourseCardProps) => {
+export const CourseCard = ({ id, title, imageUrl, chapterLength, price, progress, category }: CourseCardProps) => {  // ✅ Add category here
     return (
         <Link href={`/course/${id}`} className="h-[340] w-[400px]">
             <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3">
@@ -31,9 +31,9 @@ export const CourseCard = ({ id, title, imageUrl, chapterLength, price, progress
                     <div className="text-lg md:text-base font-medium group-hover:text-sky-700 transition line-clamp-2">
                         {title}
                     </div>
-                    {/* <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                         {category}
-                    </p> */}
+                    </p>
                     <div className="my-3 flex items-center gap-x-2 text-sm md:text-sm">
                         <div className="flex items-center gap-x-1 text-slate-500">
                             <IconBadge size="default" icon={BookOpen} />

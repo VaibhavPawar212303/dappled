@@ -3,6 +3,7 @@ import { CourseCard } from "@/components/course-card";
 import { category, Course } from "@/generated/prisma/client";
 
 type CourseWithProgressWithCategory = Course & {
+    category: category | null;
     chapters: { id: string }[];
     progress: number | null;
 }
@@ -23,7 +24,7 @@ export const CoursesList = ({ items }: CourseListProps) => {
                         chapterLength={item.chapters.length}
                         price={item.price!}
                         progress={item.progress}
-                      
+                        category={item?.category?.name!}
                     />
                 ))}
             </div>
