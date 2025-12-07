@@ -14,7 +14,7 @@ import { ChapterActions } from "./_components/chapter-actions";
 
 const ChapterIdPage = async ({ params }: { params: Promise<{ id: string; chapterId: string }> }) => {
     const { userId } = await auth();
-    const { id, chapterId } = await params;  // ✅ Await params
+    const { id, chapterId } = await params; 
     
     if (!userId) {
         return redirect("/");
@@ -22,8 +22,8 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ id: string; chapter
 
     const chapter = await prisma.chapter.findUnique({
         where: {
-            id: chapterId,  // ✅ Use chapterId
-            courseId: id  // ✅ Use id
+            id: chapterId,
+            courseId: id 
         },
         include: {
             muxData: true

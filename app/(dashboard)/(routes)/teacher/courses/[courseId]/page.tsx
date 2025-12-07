@@ -1,5 +1,5 @@
 import { IconBadge } from '@/components/icon-badge';
-import { prisma } from '@/lib/db'
+import { prisma } from '@/lib/db'  // ✅ Change prisma to db
 import { auth } from '@clerk/nextjs/server';
 import { CircleDollarSign, File, LayoutDashboard, ListCheck } from 'lucide-react';
 import { redirect } from 'next/navigation';
@@ -10,40 +10,50 @@ import { CategoryForm } from './_components/category-form';
 import { PriceForm } from './_components/price-form';
 import { AttachmentForm } from './_components/attachment-form';
 import { ChaptersForm } from './_components/chapters-form';
+import { ChapterTitleForm } from './chapters/[chapterId]/_components/chapter-title-form';
+import { ChapterDescriptionForm } from './chapters/[chapterId]/_components/chapter-description-form';
 
-const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
+const CourseIdPage = async ({ params }: { params: Promise<{ courseId: string }> }) => {
     const { userId } = await auth();
     const { courseId } = await params;
 
     if (!userId) {
         return redirect("/");
     }
-    const course = await prisma.course.findUnique({
+
+    const course = await prisma.course.findUnique({  // ✅ Change prisma to db
         where: {
-            id: courseId
+            id: courseId,
+            userId
+        },
+        include: {
+            attachments: true,
+            chapters: {
+                orderBy: {
+                    position: "asc"
+                },
+            },
         }
-    });
+    })
 
     if (!course) {
         return redirect("/");
     }
 
-    // Fetch categories from the database
-    const categories = await prisma.category.findMany();
+    const categories = await prisma.category.findMany();  // ✅ Change prisma to db
 
     const requiredFields = [
         course.title,
         course.description,
         course.imageUrl,
         course.price,
-        course.categoryId
+        course.categoryId,
+        course.chapters.some(chapter => chapter.isPublished)
     ]
 
     const totalFields = requiredFields.length;
     const completedFields = requiredFields.filter(Boolean).length;
-
     const completionText = `(${completedFields}/${totalFields})`;
-
 
     return (
         <div className='p-6'>
@@ -80,7 +90,7 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
                     <CategoryForm
                         initialData={course}
                         courseId={course.id}
-                        options={categories.map((category: { name: any; id: any; }) => ({
+                        options={categories.map((category: { name: string; id: string }) => ({
                             label: category.name,
                             value: category.id
                         }))}
@@ -93,34 +103,31 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
                             Course chapters
                         </h2>
                     </div>
-                    {/* <div>
+                    <div>
                         <ChaptersForm
                             initialData={course}
                             courseId={course.id}
                         />
-                    </div> */}
+                    </div>
                     <div>
-                        {/* <div className="flex items-center gap-x-2">
+                        <div className="flex items-center gap-x-2">
                             <IconBadge icon={CircleDollarSign} />
                             <h2 className="text-xl">Sell your course</h2>
-                        </div> */}
+                        </div>
                         <PriceForm
                             initialData={course}
                             courseId={course.id}
                         />
                     </div>
                     <div>
-                        {/* <div className="flex items-center gap-x-2">
+                        <div className="flex items-center gap-x-2">
                             <IconBadge icon={File} />
                             <h2 className="text-xl">Resources & Attachments</h2>
                         </div>
                         <AttachmentForm
-                            initialData={{
-                                ...course,
-                                attachmets: course.attachmentId
-                            }}
+                            initialData={course}  // ✅ Just pass course directly
                             courseId={course.id}
-                        /> */}
+                        />
                     </div>
                 </div>
             </div>
