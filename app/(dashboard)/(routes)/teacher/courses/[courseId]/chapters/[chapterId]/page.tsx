@@ -12,9 +12,9 @@ import { Banner } from "@/components/banner";
 import { ChapterActions } from "./_components/chapter-actions";
 
 
-const ChapterIdPage = async ({ params }: { params: Promise<{ id: string; chapterId: string }> }) => {
+const ChapterIdPage = async ({ params }: { params: Promise<{ courseId: string; chapterId: string }> }) => {
     const { userId } = await auth();
-    const { id, chapterId } = await params; 
+    const { courseId, chapterId } = await params; 
     
     if (!userId) {
         return redirect("/");
@@ -23,7 +23,7 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ id: string; chapter
     const chapter = await prisma.chapter.findUnique({
         where: {
             id: chapterId,
-            courseId: id 
+            courseId: courseId 
         },
         include: {
             muxData: true
@@ -58,7 +58,7 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ id: string; chapter
             <div className="p-6">
                 <div className="flex items-center justify-between">
                     <div className="w-full">
-                        <Link href={`/teacher/courses/${id}`} className="flex items-center text-sm hover:opacity-75 transition mb-6">
+                        <Link href={`/teacher/courses/${courseId}`} className="flex items-center text-sm hover:opacity-75 transition mb-6">
                             <ArrowLeft className="h-4 w-4 mr-2" />
                             Back to course setup
                         </Link>
@@ -73,7 +73,7 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ id: string; chapter
                             </div>
                             <ChapterActions
                                 disabled={!isComplete}
-                                courseId={id}
+                                courseId={courseId}
                                 chapterId={chapterId}
                                 isPublished={chapter.isPublished}
                             />
@@ -91,12 +91,12 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ id: string; chapter
                             </div>
                             <ChapterTitleForm
                                 initialData={chapter}
-                                courseId={id}
+                                courseId={courseId}
                                 chapterId={chapterId}
                             />
                             <ChapterDescriptionForm
                                 initialData={chapter}
-                                courseId={id}
+                                courseId={courseId}
                                 chapterId={chapterId}
                             />
                         </div>
@@ -107,7 +107,7 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ id: string; chapter
                             </div>
                             <ChapterAccess
                                 initialData={chapter}
-                                courseId={id}
+                                courseId={courseId}
                                 chapterId={chapterId}
                             />
                         </div>
@@ -121,7 +121,7 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ id: string; chapter
                         </div>
                         <ChapterVideoForm
                             initialData={chapter}
-                            courseId={id}
+                            courseId={courseId}
                             chapterId={chapterId}
                         />
                     </div>
