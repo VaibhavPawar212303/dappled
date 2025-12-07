@@ -13,6 +13,7 @@
     "@clerk/nextjs": "^6.35.5",
     "@hello-pangea/dnd": "^18.0.1",
     "@hookform/resolvers": "^5.2.2",
+    "@mux/mux-node": "^12.8.1",
     "@mux/mux-player-react": "^3.10.0",
     "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^7.1.0",

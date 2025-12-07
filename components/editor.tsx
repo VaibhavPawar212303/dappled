@@ -13,6 +13,7 @@ interface Props {
 
 export const TiptapEditor: React.FC<Props> = ({ content, onChange }) => {
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit,
       Underline,
