@@ -8,17 +8,19 @@ datasource db {
 }
 
 model Course {
-  id           String       @id @default(uuid())
-  userId       String
-  title        String
-  description  String?
-  imageUrl     String?
-  price        Float?
-  isPublished  Boolean      @default(false)
-  categoryId   String?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  attachmentId Attachment[]
+  id          String       @id @default(uuid())
+  userId      String
+  title       String
+  description String?
+  imageUrl    String?
+  price       Float?
+  isPublished Boolean      @default(false)
+  categoryId  String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  attachments Attachment[]
+  chapters    Chapter[]
+  purchases   Purchase[]
 
   @@index([categoryId])
 }
@@ -49,6 +51,12 @@ model Chapter {
   courseId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  userProgress UserProgress[]
+  muxDataId    String?
+  muxData      MuxData?
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 }
 
 model MuxData {
@@ -56,6 +64,7 @@ model MuxData {
   assetId    String
   playbackId String?
   chapterId  String  @unique
+  chapter    Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 }
 
 model UserProgress {
@@ -65,15 +74,19 @@ model UserProgress {
   isCompleted Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  chapter     Chapter  @relation(fields: [chapterId], references: [id])
 
   @@unique([userId, chapterId])
   @@index([chapterId])
 }
 
 model Purchase {
-  id        String   @id @default(uuid())
-  userId    String
-  courseId  String
+  id       String @id @default(uuid())
+  userId   String
+  courseId String
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

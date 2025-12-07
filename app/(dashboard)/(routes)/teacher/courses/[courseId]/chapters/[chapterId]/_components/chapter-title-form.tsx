@@ -26,6 +26,7 @@ const formSchema = z.object({
 export const ChapterTitleForm = ({ initialData, courseId, chapterId }: ChapterTitleFormProps) => {
     const router = useRouter();
     const [isEditing, setIsEditing] = useState(false);
+    
     const toggleEdit = () => setIsEditing((current) => !current)
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
