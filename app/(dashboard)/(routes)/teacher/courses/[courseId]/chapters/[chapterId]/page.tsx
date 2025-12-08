@@ -14,8 +14,8 @@ import { ChapterActions } from "./_components/chapter-actions";
 
 const ChapterIdPage = async ({ params }: { params: Promise<{ courseId: string; chapterId: string }> }) => {
     const { userId } = await auth();
-    const { courseId, chapterId } = await params; 
-    
+    const { courseId, chapterId } = await params;
+
     if (!userId) {
         return redirect("/");
     }
@@ -23,7 +23,7 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ courseId: string; c
     const chapter = await prisma.chapter.findUnique({
         where: {
             id: chapterId,
-            courseId: courseId 
+            courseId: courseId
         },
         include: {
             muxData: true
@@ -47,14 +47,16 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ courseId: string; c
 
     return (
         <>
-            {
-                !chapter.isPublished && (
-                    <Banner
-                        variant="warning"
-                        label="This chapter is unpublished. It will not be visible in the course"
-                    />
-                )
-            }
+            <div className="mr-10">
+                {
+                    !chapter.isPublished && (
+                        <Banner
+                            variant="warning"
+                            label="This chapter is unpublished. It will not be visible in the course"
+                        />
+                    )
+                }
+            </div>
             <div className="p-6">
                 <div className="flex items-center justify-between">
                     <div className="w-full">
@@ -80,7 +82,7 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ courseId: string; c
                         </div>
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
                     <div className="space-y-4">
                         <div>
                             <div className="flex items-center gap-x-2">
