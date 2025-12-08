@@ -62,7 +62,7 @@ const CourseLayout = async ({
                     progressCount={progressCount}
                 />
             </div>
-            <main className="md:pl-80 h-full mt-20">
+            <main className="md:pl-80 h-full mt-2">
                 {children}
             </main>
         </div>
