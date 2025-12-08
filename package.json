@@ -45,6 +45,7 @@
     "react-hook-form": "^7.67.0",
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.5.0",
+    "stripe": "^20.0.0",
     "tailwind-merge": "^3.4.0",
     "uploadthing": "^7.7.4",
     "zod": "^4.1.13"
@@ -55,6 +56,7 @@
     "@types/pg": "^8.15.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/stripe": "^8.0.416",
     "baseline-browser-mapping": "^2.9.3",
     "eslint": "^9",
     "eslint-config-next": "16.0.3",

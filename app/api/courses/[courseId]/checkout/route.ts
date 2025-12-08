@@ -1,0 +1,98 @@
+import { prisma } from "@/lib/db";
+import { stripe } from "@/lib/stripe";
+import { currentUser } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import Stripe from "stripe";
+
+export async function POST(
+    request: Request, 
+    { params }: { params: Promise<{ courseId: string }> }
+) {
+    try {
+        const user = await currentUser();
+        const { courseId } = await params;  // ✅ Await params
+        
+        if (!user || !user.id || !user.emailAddresses?.[0]?.emailAddress) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+        
+        const course = await prisma.course.findUnique({
+            where: {
+                id: courseId,  // ✅ Use courseId
+                isPublished: true,
+            }
+        });
+        
+        const purchase = await prisma.purchase.findUnique({
+            where: {
+                userId_courseId: {
+                    userId: user.id,
+                    courseId: courseId,  // ✅ Use courseId
+                }
+            }
+        });
+        
+        if (purchase) { 
+            return new NextResponse("Already purchased", { status: 400 });
+        }
+        
+        if (!course) {
+            return new NextResponse("Course not found", { status: 404 });
+        }
+        
+        const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
+            {
+                quantity: 1,
+                price_data: {
+                    currency: "USD",
+                    product_data: {
+                        name: course.title,
+                        description: course.description!,
+                    },
+                    unit_amount: Math.round(course.price! * 100),
+                }
+            }
+        ];
+        
+        let stripeCustomer = await prisma.stripeCustomer.findUnique({
+            where: {
+                userId: user.id,
+            },
+            select: {
+                stripeCustomerId: true,
+            }
+        });
+        
+        if (!stripeCustomer) {
+            const customer = await stripe.customers.create({
+                email: user.emailAddresses[0].emailAddress,
+                metadata: {
+                    userId: user.id,
+                }
+            });
+            stripeCustomer = await prisma.stripeCustomer.create({
+                data: {
+                    userId: user.id,
+                    stripeCustomerId: customer.id,
+                }
+            });
+        }
+        
+        const session = await stripe.checkout.sessions.create({
+            customer: stripeCustomer.stripeCustomerId,
+            line_items,
+            mode: "payment",
+            success_url: `${process.env.NEXT_PUBLIC_APP_URL}/course/${courseId}?success=1`,  // ✅ Use courseId
+            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/course/${courseId}?cancelled=1`,  // ✅ Use courseId
+            metadata: {
+                userId: user.id,
+                courseId: course.id,
+            },
+        });
+        
+        return NextResponse.json({ url: session.url });
+    } catch (error) {
+        console.log("[COURSE_ID_CHECKOUT]", error);
+        return new NextResponse("Internal server error", { status: 500 });
+    }
+}

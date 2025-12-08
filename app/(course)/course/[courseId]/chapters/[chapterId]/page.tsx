@@ -85,7 +85,7 @@ const ChapterIdPage = async ({ params }: PageProps) => {
                         ) : (
                             <CourseEnrollButton
                                 courseId={courseId}
-                                price={course.price!} // FIXED
+                                price={course.price!} 
                             />
                         )}
                     </div>
