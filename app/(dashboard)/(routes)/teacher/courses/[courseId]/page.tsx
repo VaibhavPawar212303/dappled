@@ -1,5 +1,5 @@
 import { IconBadge } from '@/components/icon-badge';
-import { prisma } from '@/lib/db'  // ✅ Change prisma to db
+import { prisma } from '@/lib/db' 
 import { auth } from '@clerk/nextjs/server';
 import { CircleDollarSign, File, LayoutDashboard, ListCheck } from 'lucide-react';
 import { redirect } from 'next/navigation';
@@ -21,7 +21,7 @@ const CourseIdPage = async ({ params }: { params: Promise<{ courseId: string }> 
         return redirect("/");
     }
 
-    const course = await prisma.course.findUnique({  // ✅ Change prisma to db
+    const course = await prisma.course.findUnique({  
         where: {
             id: courseId,
             userId
@@ -40,7 +40,7 @@ const CourseIdPage = async ({ params }: { params: Promise<{ courseId: string }> 
         return redirect("/");
     }
 
-    const categories = await prisma.category.findMany();  // ✅ Change prisma to db
+    const categories = await prisma.category.findMany(); 
 
     const requiredFields = [
         course.title,
@@ -125,7 +125,7 @@ const CourseIdPage = async ({ params }: { params: Promise<{ courseId: string }> 
                             <h2 className="text-xl">Resources & Attachments</h2>
                         </div>
                         <AttachmentForm
-                            initialData={course}  // ✅ Just pass course directly
+                            initialData={course} 
                             courseId={course.id}
                         />
                     </div>
