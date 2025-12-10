@@ -27,7 +27,7 @@ export const getCourses = async ({
                 categoryId,
             },
             include: {
-                category: true,
+                category:true,
                 chapters: {
                     where: {
                         isPublished: true
