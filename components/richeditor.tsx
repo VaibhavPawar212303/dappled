@@ -165,7 +165,14 @@ export const TiptapEditor: React.FC<Props> = ({ content, onChange }) => {
       attributes: {
         class: cn(
           "min-h-[150px] border border-input bg-background rounded-b-md px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 prose max-w-none",
-          isExpanded && "h-full border-0 focus-visible:ring-0"
+          
+          // ✅ FIX 1: Add specific padding for lists so numbers don't get cut off
+          "[&_ol]:pl-5 [&_ul]:pl-5",
+          
+          // ✅ FIX 2: Ensure numbers are visible by using 'list-decimal' explicit style if prose fails
+          "[&_ol]:list-decimal [&_ul]:list-disc",
+
+          isExpanded && "min-h-screen border-0 focus-visible:ring-0"
         )
       }
     },
@@ -184,11 +191,6 @@ export const TiptapEditor: React.FC<Props> = ({ content, onChange }) => {
   return (
     <>
       <Dialog open={isImageDialogOpen} onOpenChange={setIsImageDialogOpen}>
-        {/* 
-            ✅ FIX: Add z-[999999] here. 
-            The expanded editor is z-[99999], so this must be higher 
-            to appear on top of the full-screen editor.
-        */}
         <DialogContent className="sm:max-w-md z-[999999]">
           <DialogHeader>
             <DialogTitle>Upload Image</DialogTitle>
@@ -219,6 +221,11 @@ export const TiptapEditor: React.FC<Props> = ({ content, onChange }) => {
           onImageClick={() => setIsImageDialogOpen(true)}
         />
         
+        {/* 
+            ✅ FIX: wrapper styling
+            - flex-1: takes remaining height
+            - overflow-y-auto: makes this the scrollable container
+        */}
         <div className={cn(
           isExpanded && "flex-1 overflow-y-auto border border-input rounded-b-md"
         )}>
@@ -227,4 +234,4 @@ export const TiptapEditor: React.FC<Props> = ({ content, onChange }) => {
       </div>
     </>
   );
-};  
+};

@@ -68,7 +68,7 @@ const BookChapterIdPage = async ({ params }: { params: Promise<{ bookId: string;
                             <p>This chapter is locked.</p>
                         </div>
                     ) : (
-                        <div className="prose max-w-none p-4 bg-white rounded-md border shadow-sm">
+                        <div className="bg-white rounded-md border shadow-sm p-6 md:p-10"> 
                             <Preview value={chapter.content} />
                         </div>
                     )}

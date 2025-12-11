@@ -115,6 +115,79 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+
+@layer base {
+  /* Improve list visibility */
+  ul, ol {
+    list-style: revert;
+  }
+}
+
+/* Custom Tiptap Preview Styling */
+.tiptap-content pre {
+  background: #0d1117; /* GitHub Dark background */
+  color: #e6edf3;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace; /* Fallback to monospace */
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  overflow-x: auto; /* Allows scrolling for long lines */
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #30363d;
+}
+
+.tiptap-content pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: 0.875rem; /* text-sm */
+  border: none;
+  font-weight: 400;
+}
+
+/* Inline code styling (like `this`) */
+.tiptap-content :not(pre) > code {
+  background-color: #f1f5f9; /* Slate-100 */
+  color: #ef4444; /* Red-500 */
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+/* Fix for Images inside the preview */
+.tiptap-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.5rem auto; /* Center images */
+}
+
+.tiptap-content p {
+  white-space: pre-wrap; /* Allows multiple spaces to be seen */
+  min-height: 1.5rem;    /* Ensures lines have height even if empty */
+}
+
+/* 2. Fix for empty lines (Enter key pressed multiple times) */
+/* This forces empty paragraphs to render as a blank line */
+.tiptap-content p:empty::before {
+  content: "\00a0"; /* Inserts an invisible 'non-breaking space' */
+  display: inline-block;
+}
+
+/* 3. Ensure Lists don't collapse indentation */
+.tiptap-content ul, 
+.tiptap-content ol {
+  padding-left: 1.5rem;
+}
+
+/* 4. Fix code blocks to wrap properly if they are too long */
+.tiptap-content pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
