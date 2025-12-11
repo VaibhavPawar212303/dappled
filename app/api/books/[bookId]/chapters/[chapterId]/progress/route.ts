@@ -4,22 +4,23 @@ import { NextResponse } from "next/server";
 
 export async function PUT(
     req: Request, 
-    { params }: { params: Promise<{ courseId: string; chapterId: string }> }
+    { params }: { params: Promise<{ bookId: string; chapterId: string }> } // ✅ Fixed type: bookId
 ) {
     try {
         const { userId } = await auth();
-        const { courseId, chapterId } = await params;  // ✅ Await params
+        const { bookId, chapterId } = await params; // ✅ Destructure bookId
         const { isCompleted } = await req.json();
         
         if (!userId) {
             return new NextResponse('Unauthorized', { status: 401 });
         }
         
-        const userProgress = await prisma.userProgress.upsert({
+        // ✅ Use bookUserProgress table
+        const userProgress = await prisma.bookUserProgress.upsert({
             where: {
-                userId_chapterId: {
+                userId_bookChapterId: { // ✅ Use correct composite key for books
                     userId,
-                    chapterId: chapterId,  // ✅ Use chapterId
+                    bookChapterId: chapterId,
                 }
             },
             update: {
@@ -27,14 +28,14 @@ export async function PUT(
             },
             create: {
                 userId,
-                chapterId: chapterId,  // ✅ Use chapterId
+                bookChapterId: chapterId, // ✅ Map to bookChapterId field
                 isCompleted,
             }
         });
         
         return NextResponse.json(userProgress);
     } catch (error) {
-        console.log("[CHAPTER_ID_PROGRESS]", error);
+        console.log("[BOOK_CHAPTER_PROGRESS]", error);
         return new NextResponse("Internal Error", { status: 500 });
     }
 }
