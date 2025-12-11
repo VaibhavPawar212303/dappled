@@ -11,7 +11,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { TiptapEditor } from "@/components/editor";
+import { TiptapEditor } from "@/components/richeditor";
 import { Preview } from "@/components/preview";
 import { BookChapter } from "@/generated/prisma/client"; // Import BookChapter, not Book
 
