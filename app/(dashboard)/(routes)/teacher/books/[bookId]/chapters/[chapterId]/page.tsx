@@ -1,7 +1,7 @@
 import { IconBadge } from "@/components/icon-badge";
 import { prisma } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
-import { ArrowLeft, Eye, LayoutDashboard } from "lucide-react"; // Removed Video icon as books are text
+import { ArrowLeft, Book, Eye, LayoutDashboard } from "lucide-react"; // Removed Video icon as books are text
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ChapterTitleForm } from "./_components/chapter-title-form";
@@ -89,9 +89,6 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ bookId: string; cha
                                 courseId={bookId}
                                 chapterId={chapterId}
                             />
-
-                            {/* Use the new Content form here */}
-
                         </div>
                         <div>
                             <div className="flex items-center gap-x-2">
@@ -107,7 +104,7 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ bookId: string; cha
                     </div>
                     <div>
                         <div className="flex items-center gap-x-2">
-                            <IconBadge icon={Eye} />
+                            <IconBadge icon={Book} />
                             <h2 className="text-xl">Add chapter describtion</h2>
                         </div>
                         <div>
