@@ -87,10 +87,6 @@ const BookIdPage = async ({ params }: { params: Promise<{ bookId: string }> }) =
                         initialData={book}
                         bookId={bookId}
                     />
-                    <ChaptersForm
-                        initialData={book}
-                        bookId={bookId}
-                    />
                     <ImageForm
                         initialData={book}
                         bookId={bookId}
