@@ -1,9 +1,10 @@
-import { getProgress } from "@/actions/get-progress";
+import { getBookProgress } from "@/actions/get-book-progress"; // ✅ Import the new action
 import { prisma } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { BookNavbar } from "./ _components/book-navbar";
 import { BookSidebar } from "./ _components/book-sidebar";
+
 
 const BookLayout = async ({ 
   children, 
@@ -46,9 +47,9 @@ const BookLayout = async ({
         return redirect('/');
     }
 
-    const progressCount = await getProgress(userId, book.id);
+    // ✅ Use getBookProgress instead of getProgress
+    const progressCount = await getBookProgress(userId, book.id);
 
-    // ✅ FETCH PURCHASE HERE
     const purchase = await prisma.bookPurchase.findUnique({
         where: {
             userId_bookId: {
@@ -64,14 +65,14 @@ const BookLayout = async ({
                 <BookNavbar
                     course={book}
                     progressCount={progressCount}
-                    purchase={purchase} // ✅ Pass down
+                    purchase={purchase}
                 />
             </div>
             <div className="hidden md:flex h-full w-80 flex-col fixed inset-y-0 z-50">
                 <BookSidebar
                     course={book}
                     progressCount={progressCount}
-                    purchase={purchase} // ✅ Pass down
+                    purchase={purchase}
                 />
             </div>
             <main className="md:pl-80 h-full mt-2">

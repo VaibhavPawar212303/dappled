@@ -7,45 +7,26 @@ import { Preview } from "@/components/preview";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, Lock } from "lucide-react";
-import { formatPrice } from "@/lib/format";
+import { BookEnrollButton } from "./_components/book-enroll-button";
+import { BookProgressButton } from "./_components/book-progress-button";
 
-const BookChapterIdPage = async ({ 
-    params 
-}: { 
-    params: Promise<{ bookId: string; chapterId: string }> 
-}) => {
+const BookChapterIdPage = async ({ params }: { params: Promise<{ bookId: string; chapterId: string }> }) => {
     const { userId } = await auth();
     const { bookId, chapterId } = await params;
-
     if (!userId) {
         return redirect("/");
     }
-
-    const {
-        chapter,
-        book,
-        purchase,
-        nextChapter,
-        userProgress,
-        isLocked
-    } = await getBookChapter({
-        userId,
-        bookId,
-        chapterId
-    });
-
+    const {chapter,book,purchase,nextChapter,userProgress,isLocked} = await getBookChapter({userId,bookId,chapterId});
     if (!chapter || !book) {
         return redirect("/");
     }
 
     return (
         <div>
-            {/* 1. Completion Banner */}
             {userProgress?.isCompleted && (
                 <Banner variant="suceess" label="You have read this chapter." />
             )}
 
-            {/* 2. Locked Banner */}
             {isLocked && (
                 <Banner
                     variant="warning"
@@ -55,31 +36,31 @@ const BookChapterIdPage = async ({
 
             <div className="flex flex-col max-w-4xl mx-auto pb-20 px-4 mt-6">
                 
-                {/* 3. Header Section */}
                 <div className="flex flex-col md:flex-row items-center justify-between pb-4">
                     <h2 className="text-3xl font-bold">
                         {chapter.title}
                     </h2>
 
-                    {/* Action Buttons */}
                     <div className="mt-4 md:mt-0">
+                        {/* ✅ Logic to switch between Buy and Progress */}
                         {purchase ? (
-                            /* Replace with <BookProgressButton /> later */
-                            <Button variant="success" size="sm">
-                                Mark as Read
-                            </Button>
+                            <BookProgressButton
+                                chapterId={chapterId}
+                                bookId={bookId}
+                                nextChapterId={nextChapter?.id}
+                                isCompleted={!!userProgress?.isCompleted}
+                            />
                         ) : (
-                             /* Replace with <BookEnrollButton /> later */
-                            <Button size="sm" className="w-full md:w-auto">
-                                Buy for {formatPrice(book.price || 0)}
-                            </Button>
+                            <BookEnrollButton
+                                bookId={bookId}
+                                price={book.price!}
+                            />
                         )}
                     </div>
                 </div>
 
                 <Separator />
 
-                {/* 4. Content Section */}
                 <div className="mt-6">
                     {isLocked ? (
                         <div className="flex flex-col items-center justify-center h-60 bg-slate-100 rounded-md gap-y-2 text-slate-500">
@@ -87,16 +68,13 @@ const BookChapterIdPage = async ({
                             <p>This chapter is locked.</p>
                         </div>
                     ) : (
-                        // Render the actual book text here
                         <div className="prose max-w-none p-4 bg-white rounded-md border shadow-sm">
                             <Preview value={chapter.content} />
                         </div>
                     )}
                 </div>
 
-                {/* 5. Navigation Footer */}
                 <div className="flex items-center justify-between mt-8">
-                    {/* You can add a Previous button logic here if desired */}
                     <div /> 
                     
                     {nextChapter && (
