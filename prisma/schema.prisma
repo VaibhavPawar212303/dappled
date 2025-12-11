@@ -116,7 +116,12 @@ model Book {
   isPublished Boolean  @default(false)
   categoryId  String?
   category    category? @relation(fields: [categoryId], references: [id])
+  
   chapters    BookChapter[]
+  
+  // NEW: Relation to purchases
+  purchases   BookPurchase[] 
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -126,16 +131,51 @@ model Book {
 model BookChapter {
   id          String   @id @default(uuid())
   title       String
-  content     String
-  position    Int
+  content     String   
+  position    Int      
   isPublished Boolean  @default(false)
-  isFree      Boolean  @default(false)
+  isFree      Boolean  @default(false) 
+
   bookId      String
   book        Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  
+  // NEW: Relation to progress
+  userProgress BookUserProgress[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([bookId])
+}
+
+// NEW TABLE: Tracks who bought which book
+model BookPurchase {
+  id        String   @id @default(uuid())
+  userId    String
+  bookId    String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, bookId]) // One purchase per user per book
+  @@index([bookId])
+}
+
+// NEW TABLE: Tracks which chapters a user has finished
+model BookUserProgress {
+  id            String      @id @default(uuid())
+  userId        String
+  bookChapterId String
+  isCompleted   Boolean     @default(false)
+
+  chapter       BookChapter @relation(fields: [bookChapterId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([userId, bookChapterId]) // One progress record per user per chapter
+  @@index([bookChapterId])
 }
 
 model StripeCustomer {

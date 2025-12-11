@@ -13,18 +13,18 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 import { Input } from "@/components/ui/input";
+import { Book, BookChapter } from "@/generated/prisma/client";
 import { ChapterList } from "./chapters-list";
-import { Chapter, Course } from "@/generated/prisma/client";
 
 interface ChaptersFormProps {
-    initialData: Course & { chapters: Chapter[] }
-    courseId: string;
+    initialData: Book & { chapters: BookChapter[] }
+    bookId: string;
 }
 const formSchema = z.object({
     title: z.string().min(1),
 });
 
-export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
+export const ChaptersForm = ({ initialData, bookId }: ChaptersFormProps) => {
     const router = useRouter();
     const [isCreating, setIsCreating] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
@@ -41,8 +41,8 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            await axios.post(`/api/books/${courseId}/chapters`, values);
-            toast.success("Chapter created");
+            await axios.post(`/api/books/${bookId}/chapters`, values);
+            toast.success("Book chapter created");
             toggleCreating();
             router.refresh();
         } catch {
@@ -52,7 +52,7 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
     const onRecorder = async (updateData: { id: string; position: number }[]) => {
         try {
             setIsUpdating(true);
-            await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
+            await axios.put(`/api/books/${bookId}/chapters/reorder`, {
                 list: updateData
             });
             toast.success("chapters reordered");
@@ -64,7 +64,7 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
         }
     }
     const onEdit = (id: string) => {
-        router.push(`/teacher/courses/${courseId}/chapters/${id}`);
+        router.push(`/teacher/books/${bookId}/chapters/${id}`);
     }
 
 
@@ -78,7 +78,7 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
                 </div>
             )}
             <div className="font-medium flex items-center justify-between">
-                Course chapters
+                Book chapters
                 <Button onClick={toggleCreating} variant="ghost">
                     {isCreating ? (
                         <>Cancel</>
