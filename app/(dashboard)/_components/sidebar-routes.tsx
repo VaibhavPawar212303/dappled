@@ -1,6 +1,6 @@
 "use client"
 
-import { BarChart, Book, BookAIcon, Compass, Layout, List } from "lucide-react"
+import { BarChart, Book, BookAIcon, Compass, File, Layout, List, User } from "lucide-react"
 import { SidebarItem } from "./sidebar-item";
 import { usePathname } from "next/navigation";
 
@@ -20,6 +20,11 @@ const guestRoutes = [
         label: "Course Book",
         href: "/books"
     },
+     {
+        icon: File,
+        label: "Blogs",
+        href: "/blogs"
+    },
 ]
 
 const teacherRoutes = [
@@ -37,6 +42,11 @@ const teacherRoutes = [
         icon: BookAIcon,
         label: "Books",
         href: "/teacher/books"
+    },
+    {
+        icon: User,
+        label: "Blogs",
+        href: "/teacher/blogs"
     },
 ]
 
