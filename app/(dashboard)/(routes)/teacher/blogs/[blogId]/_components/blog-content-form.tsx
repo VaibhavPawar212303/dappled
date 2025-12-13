@@ -4,7 +4,7 @@ import * as z from "zod";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Pencil, Sparkles, ArrowLeft, Save } from "lucide-react";
+import { Pencil, Sparkles, ArrowLeft, Save, Maximize, X } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,8 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { TiptapEditor } from "@/components/richeditor"; // Ensure this matches your editor path
+// Ensure this path matches where you saved your updated editor component
+import { TiptapEditor } from "@/components/expand-editor";
 import { Preview } from "@/components/preview";
 import { Blog } from "@/generated/prisma/client";
 import { Badge } from "@/components/ui/badge";
@@ -34,11 +35,10 @@ export const BlogContentForm = ({ initialData, blogId }: BlogContentFormProps) =
     const router = useRouter();
     const [isEditing, setIsEditing] = useState(false);
     const [isAiLoading, setIsAiLoading] = useState(false);
-    const [showAiPanel, setShowAiPanel] = useState(false);
+    const [isFullScreen, setIsFullScreen] = useState(false);
     const [loadingText, setLoadingText] = useState("AI is working...");
 
     const toggleEdit = () => setIsEditing((current) => !current);
-    const toggleAiPanel = () => setShowAiPanel((current) => !current);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -56,6 +56,7 @@ export const BlogContentForm = ({ initialData, blogId }: BlogContentFormProps) =
             await axios.patch(`/api/blogs/${blogId}`, values);
             toast.success("Blog updated");
             setIsEditing(false);
+            setIsFullScreen(false);
             router.refresh();
         } catch {
             toast.error("Something went wrong");
@@ -65,18 +66,23 @@ export const BlogContentForm = ({ initialData, blogId }: BlogContentFormProps) =
     const onGenerateFromTitle = async () => {
         try {
             setIsAiLoading(true);
-            setShowAiPanel(true);
-            setLoadingText("🔍 Searching live market data...");
+            setIsFullScreen(true);
+
+            // Stage 1: Research
+            setLoadingText("🕵️‍♂️ Agents are browsing the web...");
 
             const response = await axios.post("/api/ai/generate", {
                 type: "generate_from_title",
                 prompt: initialData.title,
             });
 
-            setLoadingText("✍️ Drafting content...");
+            // Stage 2: Drafting
+            setLoadingText("🧠 Synthesizing insights...");
+
             form.setValue("draftContent", response.data.output);
-            toast.success("Blog generated with real-time data");
-        } catch {
+            toast.success("Comprehensive Draft Generated");
+        } catch (error) {
+            console.error(error);
             toast.error("AI Generation Failed");
         } finally {
             setIsAiLoading(false);
@@ -111,8 +117,37 @@ export const BlogContentForm = ({ initialData, blogId }: BlogContentFormProps) =
         if (draft) {
             form.setValue("content", draft);
             toast.success("Draft copied to Main Editor");
+        } else {
+            toast.error("Draft is empty");
         }
     };
+
+    const ActionToolbar = () => (
+        <div className="flex flex-wrap items-center gap-2">
+            <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onGenerateFromTitle}
+                disabled={isAiLoading}
+                className="bg-white border-purple-200 text-purple-700 hover:bg-purple-50"
+            >
+                <Sparkles className="h-4 w-4 mr-2" />
+                {isAiLoading ? loadingText : "Auto-Write Draft"}
+            </Button>
+            <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onGenerateTags}
+                disabled={isAiLoading}
+                className="bg-white border-blue-200 text-blue-700 hover:bg-blue-50"
+            >
+                <Sparkles className="h-4 w-4 mr-2" />
+                Generate Tags
+            </Button>
+        </div>
+    );
 
     return (
         <div className="mt-6 border bg-slate-100 rounded-md p-4">
@@ -142,69 +177,133 @@ export const BlogContentForm = ({ initialData, blogId }: BlogContentFormProps) =
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 
-                        {/* AI TOOLBAR */}
-                        <div className="flex flex-wrap items-center gap-2 mb-2 p-2 bg-white rounded-md border shadow-sm">
-                            <Button type="button" variant="outline" size="sm" onClick={onGenerateFromTitle} disabled={isAiLoading}>
-                                <Sparkles className="h-4 w-4 mr-2 text-purple-600" />
-                                {isAiLoading ? loadingText : "Auto-Write with Market Data"}
-                            </Button>
-                            <Button type="button" variant="outline" size="sm" onClick={onGenerateTags} disabled={isAiLoading}>
-                                <Sparkles className="h-4 w-4 mr-2 text-blue-600" />
-                                Generate Tags
-                            </Button>
-                            <Button type="button" variant={showAiPanel ? "secondary" : "ghost"} size="sm" onClick={toggleAiPanel} className="ml-auto">
-                                {showAiPanel ? "Close Draft" : "Open AI Draft"}
-                            </Button>
-                        </div>
+                        {/* ---------------------------------------------------------- */}
+                        {/* 1. FULL SCREEN OVERLAY (Split View)                        */}
+                        {/* ---------------------------------------------------------- */}
+                        {isFullScreen && (
+                            <div className="fixed inset-0 z-[9999] bg-slate-100 flex flex-col animate-in fade-in zoom-in-95 duration-200">
 
-                        {/* SPLIT EDITOR */}
-                        <div className="flex flex-col md:flex-row gap-4 h-full">
-                            {/* LEFT: MAIN CONTENT */}
-                            <div className="flex-1 space-y-2">
-                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Public Content</p>
-                                <FormField
-                                    control={form.control}
-                                    name="content"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormControl>
-                                                <TiptapEditor
-                                                    //@ts-ignore
-                                                    content={field.value} onChange={field.onChange} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            {/* RIGHT: AI DRAFT */}
-                            {showAiPanel && (
-                                <div className="flex-1 space-y-2 border-l pl-4 border-slate-300">
-                                    <div className="flex items-center justify-between">
-                                        <p className="text-xs font-bold text-purple-600 uppercase tracking-wider">AI Sandbox / Draft</p>
-                                        <Button type="button" size="sm" variant="ghost" onClick={copyDraftToMain} title="Copy Draft to Main">
-                                            <ArrowLeft className="h-4 w-4 mr-2" />
-                                            Use Draft
+                                {/* Top Bar */}
+                                <div className="h-16 border-b bg-white px-4 flex items-center justify-between shadow-sm flex-shrink-0 z-50">
+                                    <div className="flex items-center gap-4">
+                                        <h2 className="font-bold text-lg hidden md:block">AI Writer Studio</h2>
+                                        <div className="h-6 w-[1px] bg-slate-300 hidden md:block" />
+                                        <ActionToolbar />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            // Trigger submit manually since we are visually outside the form, 
+                                            // but structurally inside the Form Context
+                                            onClick={form.handleSubmit(onSubmit)}
+                                            disabled={!isValid || isSubmitting}
+                                            size="sm"
+                                            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                        >
+                                            <Save className="h-4 w-4 mr-2" />
+                                            Save & Close
+                                        </Button>
+                                        <Button onClick={() => setIsFullScreen(false)} variant="ghost" size="sm">
+                                            <X className="h-5 w-5" />
                                         </Button>
                                     </div>
-                                    <FormField
-                                        control={form.control}
-                                        name="draftContent"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormControl>
-                                                    <TiptapEditor content={field.value || ""} onChange={field.onChange} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
                                 </div>
-                            )}
+
+                                {/* Split Editor Area */}
+                                <div className="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-200/50">
+
+                                    {/* LEFT: Public Content */}
+                                    <div className="flex-1 flex flex-col border-r border-slate-300 bg-white h-full overflow-hidden shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-10">
+                                        <div className="p-4 bg-white border-b text-xs font-bold text-slate-600 uppercase tracking-wider sticky top-0 z-20 shadow-sm">
+                                            Public Content (Live)
+                                        </div>
+                                        {/* Added pb-32 to give space at the bottom */}
+                                        <div className="flex-1 overflow-y-auto pb-32">
+                                            <FormField
+                                                control={form.control}
+                                                name="content"
+                                                render={({ field }) => (
+                                                    <FormItem className="h-full">
+                                                        <FormControl>
+                                                            <TiptapEditor
+                                                                //@ts-ignore
+                                                                content={field.value}
+                                                                onChange={field.onChange}
+                                                                className="h-full border-0 rounded-none min-h-screen px-8 py-6"
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* RIGHT: AI Sandbox */}
+                                    <div className="flex-1 flex flex-col bg-[#fafafa] h-full overflow-hidden">
+                                        <div className="p-3 bg-purple-50/50 border-b text-xs font-bold text-purple-700 uppercase tracking-wider flex justify-between items-center sticky top-0 z-20 backdrop-blur-sm">
+                                            <span className="flex items-center gap-2">
+                                                <Sparkles className="h-3 w-3" />
+                                                AI Sandbox (Draft)
+                                            </span>
+                                            <Button type="button" size="sm" variant="ghost" onClick={copyDraftToMain} className="h-6 text-xs hover:bg-purple-100 text-purple-700">
+                                                <ArrowLeft className="h-3 w-3 mr-1" />
+                                                Copy to Public
+                                            </Button>
+                                        </div>
+                                        {/* Added pb-32 here as well */}
+                                        <div className="flex-1 overflow-y-auto pb-32">
+                                            <FormField
+                                                control={form.control}
+                                                name="draftContent"
+                                                render={({ field }) => (
+                                                    <FormItem className="h-full">
+                                                        <FormControl>
+                                                            <TiptapEditor
+                                                                content={field.value || ""}
+                                                                onChange={field.onChange}
+                                                                className="h-full border-0 rounded-none bg-transparent min-h-screen px-8 py-6"
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 2. NORMAL INLINE MODE */}
+                        <div className="flex flex-wrap items-center gap-2 mb-2 p-2 bg-white rounded-md border shadow-sm justify-between">
+                            <ActionToolbar />
+                            <Button
+                                type="button"
+                                variant="default"
+                                size="sm"
+                                onClick={() => setIsFullScreen(true)}
+                                className="bg-slate-800 text-white hover:bg-slate-900"
+                            >
+                                <Maximize className="h-4 w-4 mr-2" />
+                                Open Studio
+                            </Button>
                         </div>
 
-                        {/* FOOTER ACTIONS */}
+                        <FormField
+                            control={form.control}
+                            name="content"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <TiptapEditor
+                                            //@ts-ignore
+                                            content={field.value}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
                         <div className="flex items-center justify-between gap-x-2 mt-4 pt-4 border-t">
                             <div className="flex gap-2 flex-wrap">
                                 {form.watch("tags")?.map((tag, i) => (
