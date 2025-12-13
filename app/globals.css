@@ -196,3 +196,31 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer base {
+  :root {
+    /* --- NEUTRALS (Backgrounds & Text) --- */
+    --background: 0 0% 100%;       /* White */
+    --foreground: 222.2 84% 4.9%;  /* Slate 900 (Black-ish) */
+    
+    --muted: 210 40% 96.1%;        /* Slate 100 */
+    --muted-foreground: 215.4 16.3% 46.9%; /* Slate 500 */
+
+    /* --- BRAND: BLACK & WHITE --- */
+    --brand-black: 222.2 84% 4.9%;
+    --brand-white: 0 0% 100%;
+
+    /* --- PRODUCT COLORS --- */
+    /* Blue for Courses */
+    --course-primary: 221.2 83.2% 53.3%; /* Blue 600 */
+    --course-light: 214.3 94.6% 92%;     /* Blue 50 */
+
+    /* Purple for Books */
+    --book-primary: 271.5 81.3% 55.9%;   /* Purple 600 */
+    --book-light: 270 95% 93%;           /* Purple 50 */
+
+    /* Emerald for Blogs/AI */
+    --blog-primary: 158.1 64.4% 51.6%;   /* Emerald 600 */
+    --blog-light: 152 86% 94%;           /* Emerald 50 */
+  }
+}
