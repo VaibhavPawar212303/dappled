@@ -4,15 +4,15 @@ import Link from "next/link";
 import { UserButton, SignedIn, SignedOut } from "@clerk/nextjs"; // ✅ Import these
 import { ArrowLeft, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/app/_components/logo";
 
 export const BlogNavbar = () => {
     return (
         <div className="p-4 border-b h-full flex items-center bg-white shadow-sm max-w-6xl mx-auto">
             {/* Left Side: Brand */}
             <div className="flex items-center gap-x-4">
-                <Link href="/" className="font-bold text-xl text-slate-700">
-                    {/* Replace with your Logo if you have one */}
-                    Dappled
+                <Link href="/blogs" className="font-bold text-xl text-slate-700">
+                   <Logo/>
                 </Link>
             </div>
 

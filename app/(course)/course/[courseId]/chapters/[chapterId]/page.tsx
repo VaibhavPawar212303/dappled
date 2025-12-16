@@ -8,6 +8,8 @@ import { Separator } from "@/components/ui/separator";
 import { Preview } from "@/components/preview";
 import { File } from "lucide-react";
 import { CourseProgressButton } from "./_components/course-progress-button";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface PageProps {
     params: {
@@ -59,6 +61,13 @@ const ChapterIdPage = async ({ params }: PageProps) => {
             )}
 
             <div className="flex flex-col max-w-4xl ms-auto pb-20">
+                <div className="flex justify-end mr-5">
+                    <Link href="/search">
+                        <Button variant="default" size="sm" className="border-slate-300">
+                            Back
+                        </Button>
+                    </Link>
+                </div>
                 <div className="p-4">
                     <VideoPlayer
                         chapterId={chapterId}
@@ -85,7 +94,7 @@ const ChapterIdPage = async ({ params }: PageProps) => {
                         ) : (
                             <CourseEnrollButton
                                 courseId={courseId}
-                                price={course.price!} 
+                                price={course.price!}
                             />
                         )}
                     </div>

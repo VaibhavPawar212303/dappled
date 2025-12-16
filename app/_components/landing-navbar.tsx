@@ -13,7 +13,7 @@ export const LandingNavbar = () => {
     <nav className="p-4 bg-white/95 backdrop-blur-sm flex items-center justify-between z-50 w-full border-b border-slate-200 fixed top-0 transition-all">
       
       {/* 1. BRAND LOGO */}
-      <Link href="/" className="hover:opacity-90 transition">
+      <Link href="/" className="hover:opacity-90 transition mt-3">
         <Logo />
       </Link>
 

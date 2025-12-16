@@ -13,7 +13,7 @@ const BlogLayout = ({
             </div>
 
             {/* Main Content */}
-            <main className="pt-[80px] h-full">
+            <main className="h-full">
                 <div className="max-w-6xl mx-auto p-6 h-full">
                     {children}
                 </div>
