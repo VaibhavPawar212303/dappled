@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { TiptapEditor } from "@/components/editor";
 import { Preview } from "@/components/preview";
-import { Book } from "@/generated/prisma/client";
+import { Book } from "@prisma/client";
 
 interface ChapterDescriptionFormProps {
     initialData: Book

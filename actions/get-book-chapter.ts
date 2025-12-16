@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { BookUserProgress, BookPurchase, BookChapter, Book } from "@/generated/prisma/client"; // Adjust path if needed
+import { BookUserProgress, BookPurchase, BookChapter, Book } from "@prisma/client"; // Adjust path if needed
 
 interface GetBookChapterProps {
     userId: string;

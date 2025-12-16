@@ -36,7 +36,7 @@ export const Logo = ({ className, showText = true }: LogoProps) => {
       {/* The Text */}
       {showText && (
         <span className="font-bold text-xl tracking-tight text-slate-900">
-          TheDappled
+          Thedappled
         </span>
       )}
     </div>

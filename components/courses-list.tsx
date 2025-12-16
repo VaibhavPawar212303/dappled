@@ -1,6 +1,6 @@
 
 import { CourseCard } from "@/components/course-card";
-import { category, Course } from "@/generated/prisma/client";
+import { category, Course } from "@prisma/client";
 
 type CourseWithProgressWithCategory = Course & {
     category: category | null;

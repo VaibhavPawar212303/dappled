@@ -1,5 +1,6 @@
-import { Blog } from "@/generated/prisma/client";
+
 import { prisma } from "@/lib/db";
+import { Blog } from "@prisma/client";
 
 type GetBlogs = {
     title?: string;

@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 import { Input } from "@/components/ui/input";
 import { formatPrice } from "@/lib/format";
-import { Course } from "@/generated/prisma/client";
+import { Course } from "@prisma/client";
 
 
 interface PriceFormProps {

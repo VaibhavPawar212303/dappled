@@ -5,7 +5,7 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { cn } from "@/lib/utils"
 import { Grip, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Chapter } from "@/generated/prisma/client";
+import { Chapter } from "@prisma/client";
 
 interface ChapterListProps {
     items: Chapter[];

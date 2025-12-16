@@ -1,4 +1,4 @@
-import { category, Book } from "@/generated/prisma/client";
+import { category, Book } from "@prisma/client";
 import { prisma } from "@/lib/db";
 
 // Define the type to include relations

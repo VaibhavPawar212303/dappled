@@ -9,7 +9,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { FileUpload } from "@/components/file-upload";
-import { Attachment, Course } from "@/generated/prisma/client";
+import { Attachment, Course } from "@prisma/client";
 
 interface AttachmentFormProps {
     initialData: Course & { attachments: Attachment[] };  // ✅ Explicitly type attachments
