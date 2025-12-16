@@ -75,7 +75,7 @@ const BookLayout = async ({
                     purchase={purchase}
                 />
             </div>
-            <main className="md:pl-80 h-full mt-2">
+            <main className="md:pl-80 h-full">
                 {children}
             </main>
         </div>
