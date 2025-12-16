@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 import { Input } from "@/components/ui/input";
-import { Book, BookChapter } from "@/generated/prisma/client";
+import { Book, BookChapter } from "@prisma/client";
 import { ChapterList } from "./chapters-list";
 
 interface ChaptersFormProps {

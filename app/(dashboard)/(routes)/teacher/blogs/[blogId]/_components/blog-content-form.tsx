@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 // Ensure this path matches where you saved your updated editor component
 import { TiptapEditor } from "@/components/expand-editor";
 import { Preview } from "@/components/preview";
-import { Blog } from "@/generated/prisma/client";
+import { Blog } from "@prisma/client";
 import { Badge } from "@/components/ui/badge";
 
 interface BlogContentFormProps {

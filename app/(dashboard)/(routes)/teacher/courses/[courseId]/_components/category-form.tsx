@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Combobox } from "@/components/ui/combobox";
-import { Course } from "@/generated/prisma/client";
+import { Course } from "@prisma/client";
 
 interface CategoryFormProps {
     initialData: Course

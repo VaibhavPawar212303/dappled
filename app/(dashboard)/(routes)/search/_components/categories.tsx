@@ -3,7 +3,7 @@
 import { FcContacts, FcEngineering, FcFilmReel, FcMultipleDevices, FcOldTimeCamera, FcSalesPerformance, FcSportsMode } from 'react-icons/fc';
 import { IconType } from "react-icons";
 import { CategoryItem } from "./category-item";
-import { category } from '@/generated/prisma/client';
+import { category } from '@prisma/client';
 
 interface CategoriesProps {
     items: category[];

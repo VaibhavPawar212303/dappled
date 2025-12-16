@@ -9,7 +9,7 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { FileUpload } from "@/components/file-upload";
-import { Blog } from "@/generated/prisma/client";
+import { Blog } from "@prisma/client";
 
 interface ImageFormProps {
     initialData: Blog;

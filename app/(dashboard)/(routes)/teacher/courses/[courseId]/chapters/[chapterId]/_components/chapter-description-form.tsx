@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { TiptapEditor } from "@/components/editor";
 import { Preview } from "@/components/preview";
 
-import { Chapter } from "@/generated/prisma/client";
+import { Chapter } from "@prisma/client";
 
 
 

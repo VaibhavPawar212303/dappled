@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { FileUpload } from "@/components/file-upload";
 import MuxPlayer from "@mux/mux-player-react"
-import { Chapter, MuxData } from "@/generated/prisma/client";
+import { Chapter, MuxData } from "@prisma/client";
 
 interface ChapterVideoProps {
     initialData: Chapter & { muxData?: MuxData | null };

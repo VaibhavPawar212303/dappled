@@ -1,6 +1,6 @@
 "use client";
 
-import { Blog } from "@/generated/prisma/client";
+import { Blog } from "@prisma/client";
 import { BlogCard } from "./blog-card";
 
 interface BlogsListProps {

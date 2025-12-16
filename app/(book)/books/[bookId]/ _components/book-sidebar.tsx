@@ -1,4 +1,4 @@
-import { Book, BookChapter, BookUserProgress, BookPurchase } from "@/generated/prisma/client";
+import { Book, BookChapter, BookUserProgress, BookPurchase } from "@prisma/client";
 import { CourseProgress } from "@/components/course-progress";
 import { BookSidebarItem } from "./book-sidebar-item";
 

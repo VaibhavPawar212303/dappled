@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Chapter } from "@/generated/prisma/client";
+import { Chapter } from "@prisma/client";
 
 
 

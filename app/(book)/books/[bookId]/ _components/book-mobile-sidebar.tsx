@@ -2,7 +2,7 @@
 
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Book, BookChapter, BookUserProgress, BookPurchase } from "@/generated/prisma/client";
+import { Book, BookChapter, BookUserProgress, BookPurchase } from "@prisma/client";
 import { BookSidebar } from "./book-sidebar";
 
 interface BookMobileSidebarProps {

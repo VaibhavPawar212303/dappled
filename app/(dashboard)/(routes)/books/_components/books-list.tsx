@@ -1,6 +1,6 @@
 "use client";
 
-import { category, Book } from "@/generated/prisma/client";
+import { category, Book } from "@prisma/client";
 import { BookCard } from "./book-card"; // We will create this next
 
 type BookWithCategory = Book & {

@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { TiptapEditor } from "@/components/richeditor";
 import { Preview } from "@/components/preview";
-import { BookChapter } from "@/generated/prisma/client"; // Import BookChapter, not Book
+import { BookChapter } from "@prisma/client"; // Import BookChapter, not Book
 
 interface BookChapterContentFormProps {
     initialData: BookChapter;

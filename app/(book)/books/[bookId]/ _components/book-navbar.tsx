@@ -2,7 +2,7 @@
 
 import { NavbarRoutes } from "@/components/navbar-routes";
 import { BookMobileSidebar } from "./book-mobile-sidebar";
-import { Book, BookChapter, BookUserProgress, BookPurchase } from "@/generated/prisma/client";
+import { Book, BookChapter, BookUserProgress, BookPurchase } from "@prisma/client";
 
 interface BookNavbarProps {
     course: Book & {

@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 import { Input } from "@/components/ui/input";
 import { ChapterList } from "./chapters-list";
-import { Chapter, Course } from "@/generated/prisma/client";
+import { Chapter, Course } from "@prisma/client";
 
 interface ChaptersFormProps {
     initialData: Course & { chapters: Chapter[] }
