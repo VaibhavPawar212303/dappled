@@ -1,7 +1,7 @@
 import { IconBadge } from "@/components/icon-badge";
 import { prisma } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
-import { ArrowLeft, Book, Eye, LayoutDashboard } from "lucide-react"; // Removed Video icon as books are text
+import { ArrowLeft, Book, BrainCircuit, Eye, LayoutDashboard, Voicemail } from "lucide-react"; 
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ChapterTitleForm } from "./_components/chapter-title-form";
@@ -9,6 +9,9 @@ import { ChapterAccess } from "./_components/chapter-access-form";
 import { Banner } from "@/components/banner";
 import { ChapterActions } from "./_components/chapter-actions";
 import { BookChapterContentForm } from "../../_components/description-form";
+import { AudioPlayer } from "./_components/audio-player";
+// ✅ Import the new component
+import { ChapterQuizForm } from "./_components/chapter-quiz-form";
 
 const ChapterIdPage = async ({ params }: { params: Promise<{ bookId: string; chapterId: string }> }) => {
     const { userId } = await auth();
@@ -75,6 +78,8 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ bookId: string; cha
                     </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
+                    
+                    {/* Left Column */}
                     <div className="space-y-4">
                         <div>
                             <div className="flex items-center gap-x-2">
@@ -85,7 +90,7 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ bookId: string; cha
                             </div>
 
                             <ChapterTitleForm
-                                initialData={chapter} // Ensure this component accepts generic { title: string } or BookChapter
+                                initialData={chapter}
                                 courseId={bookId}
                                 chapterId={chapterId}
                             />
@@ -101,12 +106,37 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ bookId: string; cha
                                 chapterId={chapterId}
                             />
                         </div>
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-x-2">
-                            <IconBadge icon={Book} />
-                            <h2 className="text-xl">Add chapter describtion</h2>
+                        
+                        {/* ✅ Added Quiz Form here */}
+                        <div>
+                            <div className="flex items-center gap-x-2 mb-2">
+                                <IconBadge icon={BrainCircuit} />
+                                <h2 className="text-xl">AI Quiz Generation</h2>
+                            </div>
+                            <ChapterQuizForm 
+                                initialData={chapter}
+                                bookId={bookId}
+                                chapterId={chapterId}
+                            />
                         </div>
+                    </div>
+
+                    {/* Right Column */}
+                    <div>
+                        <div className="flex items-center gap-x-2 mb-3">
+                            <IconBadge icon={Book} />
+                            <h2 className="text-xl">Add chapter content</h2>
+                        </div>
+                        
+                        <div className="flex items-center gap-4 mb-4">
+                            <AudioPlayer
+                                text={chapter.content}
+                                initialVoice={chapter.preferredVoice}
+                                bookId={bookId}
+                                chapterId={chapterId}
+                            />
+                        </div>
+                        
                         <div>
                             <BookChapterContentForm
                                 initialData={chapter}

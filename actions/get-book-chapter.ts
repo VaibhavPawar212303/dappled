@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { BookUserProgress, BookPurchase, BookChapter, Book } from "@prisma/client"; // Adjust path if needed
+import { BookUserProgress, BookPurchase, BookChapter, Book } from "@prisma/client";
 
 interface GetBookChapterProps {
     userId: string;
@@ -7,14 +7,14 @@ interface GetBookChapterProps {
     chapterId: string;
 }
 
-// Explicitly define the return type so TypeScript knows userProgress has 'isCompleted'
 interface GetBookChapterResult {
     chapter: BookChapter | null;
     book: Book | null;
     purchase: BookPurchase | null;
-    userProgress: BookUserProgress | null; // <--- This fixes the "never" error
+    userProgress: BookUserProgress | null;
     isLocked: boolean;
     nextChapter: BookChapter | null;
+    userVoice: string | null; 
 }
 
 export const getBookChapter = async ({
@@ -33,11 +33,11 @@ export const getBookChapter = async ({
         });
 
         const book = await prisma.book.findUnique({
-            where: {
-                id: bookId,
-            },
+            where: { id: bookId },
         });
 
+        // 1. We fetch the chapter here. 
+        // Prisma automatically fetches 'preferredVoice' if it exists in the schema.
         const chapter = await prisma.bookChapter.findUnique({
             where: {
                 id: chapterId,
@@ -57,6 +57,9 @@ export const getBookChapter = async ({
                 }
             }
         });
+
+        // ❌ REMOVED: No need to fetch userSettings or fetch bookChapter again.
+        // We already have the 'chapter' variable above.
 
         const isLocked = !chapter.isFree && !purchase;
 
@@ -80,6 +83,8 @@ export const getBookChapter = async ({
             userProgress,
             isLocked,
             nextChapter,
+            // ✅ FIX: Read directly from the fetched chapter
+            userVoice: chapter.preferredVoice || null, 
         };
     } catch (error) {
         console.log("[GET_BOOK_CHAPTER]", error);
@@ -90,6 +95,7 @@ export const getBookChapter = async ({
             userProgress: null,
             isLocked: true,
             nextChapter: null,
+            userVoice: null,
         };
     }
 };

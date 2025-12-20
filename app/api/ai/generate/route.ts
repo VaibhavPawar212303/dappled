@@ -7,9 +7,13 @@ import { tavily } from "@tavily/core";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY! });
 
-// 🏆 MODEL PRIORITY (Using your latest available models)
+// 🏆 MODEL PRIORITY
+// Added fallbacks to ensure uptime if 2.5 is region-locked or beta-gated
 const MODEL_CANDIDATES = [
-  "gemini-2.5-flash",       // Excellent speed/intelligence balance      
+  "gemini-2.5-flash", 
+  "gemini-2.0-flash", 
+  "gemini-1.5-pro",
+  "gemini-1.5-flash"
 ];
 
 export async function POST(req: Request) {
@@ -28,20 +32,19 @@ export async function POST(req: Request) {
 
     // ============================================================
     // 1. AGENTIC RESEARCH PHASE (The "MCP" Logic)
+    // Only run search for writing/expanding tasks, not for quizzes
     // ============================================================
     if (type === "generate_from_title" || type === "expand_content") {
         try {
             console.log(`🔍 [Agent] Researching topic: "${prompt}"...`);
             
-            // We use 'advanced' depth to get better results
             const searchResult = await tvly.search(prompt, {
                 search_depth: "advanced", 
-                max_results: 7, // Get more sources for a comprehensive blog
+                max_results: 7, 
                 include_answer: true,
-                include_raw_content: false, // Set to true if you want HTML parsing (heavy), usually 'content' is enough
+                include_raw_content: false, 
             });
 
-            // Construct a rich context block for the LLM
             searchContext = `
             REAL-TIME MARKET DATA & COMPETITOR CONTENT:
             -------------------------------------------------------------
@@ -68,53 +71,55 @@ export async function POST(req: Request) {
       case "generate_from_title":
         systemInstruction = `
           You are a Senior Technical Blog Writer.
-          
-          TASK:
-          Write a comprehensive, long-form blog post (1500+ words) based on the Title and the provided Market Data.
-          
+          TASK: Write a comprehensive, long-form blog post (1500+ words) based on the Title and Market Data.
           GUIDELINES:
-          1. **Accuracy:** Prioritize the provided "Real-Time Market Data". If the data mentions a new version (e.g., Next.js 15), use that.
-          2. **Structure:**
-             - **Catchy H1 Title**
-             - **Introduction:** Hook the reader, define the problem.
-             - **Key Takeaways (Bullet points)**
-             - **Deep Dive Sections (H2 & H3):** Use the search results to flesh out technical details.
-             - **Code Examples:** If technical, provide realistic code blocks.
-             - **Conclusion:** Summary and call to action.
-          3. **Formatting:** Use semantic HTML (<h1>, <h2>, <p>, <ul>, <pre><code>).
-          4. **Citations:** Mentions specific tools or stats found in the search context.
+          1. **Accuracy:** Prioritize "Real-Time Market Data".
+          2. **Structure:** Catchy H1, Intro, Bullet points, Deep Dive H2/H3s, Code Examples, Conclusion.
+          3. **Formatting:** Use semantic HTML.
         `;
-        
         finalPrompt = `${systemInstruction}\n\n${searchContext}\n\nBLOG TITLE: "${prompt}"\n\nWRITE THE BLOG POST HTML NOW:`;
         break;
 
       case "expand_content":
         systemInstruction = `
           You are a Senior Editor.
-          
-          TASK:
-          Take the user's current draft and EXPAND it using the latest market data found in the search context.
-          
-          GUIDELINES:
-          1. Keep the user's original tone.
-          2. Inject new statistics, recent updates, or missing technical details found in the search context.
-          3. Fix any factual errors based on the search data.
-          4. Return the full updated HTML.
+          TASK: Expand the user's draft using the latest market data found in the search context.
+          GUIDELINES: Keep the original tone. Inject new statistics and updates. Fix factual errors.
         `;
         finalPrompt = `${systemInstruction}\n\n${searchContext}\n\nUSER'S CURRENT DRAFT:\n${currentContent}`;
         break;
 
       case "generate_tags":
-        // Keep this lightweight
         finalPrompt = `
-          Analyze the following Title and Market Context.
-          Generate 5 trending, high-traffic SEO tags relevant to right now.
+          Analyze the Title and Market Context. Generate 5 trending SEO tags.
           Return ONLY a JSON array of strings. Example: ["Next.js 15", "AI Agents"]
-          
           ${searchContext}
-          
           TITLE: "${prompt}"
         `;
+        break;
+
+      // ✅ NEW: Quiz Generation Logic
+      case "generate_quiz":
+        systemInstruction = `
+          You are an expert Teacher. 
+          Analyze the provided text content.
+          Generate 3 Multiple Choice Questions (MCQ) to test the student's understanding.
+          
+          RETURN FORMAT:
+          You MUST return a raw JSON array. Do not wrap in markdown code blocks.
+          
+          JSON Structure:
+          [
+            {
+              "question": "The question text?",
+              "options": ["Option A", "Option B", "Option C", "Option D"],
+              "correctAnswer": 0, // Index of the correct option (0-3)
+              "explanation": "Why this is correct."
+            }
+          ]
+        `;
+        // Limit content length to prevent context window overflow
+        finalPrompt = `${systemInstruction}\n\nCHAPTER CONTENT:\n${currentContent?.substring(0, 15000)}`;
         break;
 
       default:
@@ -134,9 +139,12 @@ export async function POST(req: Request) {
         
         const model = genAI.getGenerativeModel({ model: modelName });
         
+        // Determine if we need JSON mode (for Tags and Quizzes)
+        const isJsonMode = type === "generate_tags" || type === "generate_quiz";
+
         const result = await model.generateContent({
             contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
-            generationConfig: type === "generate_tags" ? { responseMimeType: "application/json" } : undefined
+            generationConfig: isJsonMode ? { responseMimeType: "application/json" } : undefined
         });
 
         const response = await result.response;
