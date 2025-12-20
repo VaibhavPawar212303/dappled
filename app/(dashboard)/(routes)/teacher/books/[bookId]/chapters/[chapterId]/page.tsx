@@ -106,8 +106,6 @@ const ChapterIdPage = async ({ params }: { params: Promise<{ bookId: string; cha
                                 chapterId={chapterId}
                             />
                         </div>
-                        
-                        {/* ✅ Added Quiz Form here */}
                         <div>
                             <div className="flex items-center gap-x-2 mb-2">
                                 <IconBadge icon={BrainCircuit} />

@@ -9,6 +9,7 @@ import Link from "next/link";
 import { ArrowRight, Lock } from "lucide-react";
 import { BookEnrollButton } from "./_components/book-enroll-button";
 import { BookProgressButton } from "./_components/book-progress-button";
+import { StudentQuiz } from "./_components/student-quiz";
 import { AudioPlayer } from "@/app/(dashboard)/(routes)/teacher/books/[bookId]/chapters/[chapterId]/_components/audio-player";
 
 const BookChapterIdPage = async ({ 
@@ -30,7 +31,7 @@ const BookChapterIdPage = async ({
         nextChapter,
         userProgress,
         isLocked,
-        userVoice // ✅ Get the voice from the action
+        userVoice
     } = await getBookChapter({
         userId,
         bookId,
@@ -80,12 +81,12 @@ const BookChapterIdPage = async ({
                         </div>
                     </div>
 
-                    {/* ✅ Audio Player Section */}
+                    {/* Audio Player Section */}
                     {!isLocked && (
                         <div className="w-full flex items-center justify-end">
                             <AudioPlayer 
                                 text={chapter.content}
-                                initialVoice={userVoice} // ✅ Pass the fetched voice here
+                                initialVoice={userVoice}
                                 bookId={bookId}
                                 chapterId={chapterId}
                             />
@@ -103,8 +104,15 @@ const BookChapterIdPage = async ({
                             <p>This chapter is locked.</p>
                         </div>
                     ) : (
-                        <div className="bg-white rounded-md border shadow-sm p-6 md:p-10"> 
-                            <Preview value={chapter.content} />
+                        <div className="space-y-10">
+                            {/* 1. Main Text Content */}
+                            <div className="bg-white rounded-md border shadow-sm p-6 md:p-10"> 
+                                <Preview value={chapter.content} />
+                            </div>
+
+                            {/* 2. ✅ Student Quiz Component */}
+                            {/* We pass the 'quiz' field from the DB. If it's null, the component renders nothing. */}
+                            <StudentQuiz quizData={chapter.quiz} />
                         </div>
                     )}
                 </div>
