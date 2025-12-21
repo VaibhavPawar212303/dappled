@@ -12,6 +12,7 @@ import { BookProgressButton } from "./_components/book-progress-button";
 import { StudentQuiz } from "./_components/student-quiz";
 import { AudioPlayer } from "@/app/(dashboard)/(routes)/teacher/books/[bookId]/chapters/[chapterId]/_components/audio-player";
 
+
 const BookChapterIdPage = async ({ 
     params 
 }: { 
@@ -42,6 +43,9 @@ const BookChapterIdPage = async ({
         return redirect("/");
     }
 
+    // Helper to check if quiz exists
+    const hasQuiz = !!chapter.quiz && Array.isArray(chapter.quiz) && chapter.quiz.length > 0;
+
     return (
         <div>
             {userProgress?.isCompleted && (
@@ -71,6 +75,8 @@ const BookChapterIdPage = async ({
                                     bookId={bookId}
                                     nextChapterId={nextChapter?.id}
                                     isCompleted={!!userProgress?.isCompleted}
+                                    // ✅ Pass hasQuiz to enforce logic
+                                    hasQuiz={hasQuiz} 
                                 />
                             ) : (
                                 <BookEnrollButton
@@ -110,8 +116,7 @@ const BookChapterIdPage = async ({
                                 <Preview value={chapter.content} />
                             </div>
 
-                            {/* 2. ✅ Student Quiz Component */}
-                            {/* We pass the 'quiz' field from the DB. If it's null, the component renders nothing. */}
+                            {/* 2. Student Quiz Component */}
                             <StudentQuiz quizData={chapter.quiz} />
                         </div>
                     )}
