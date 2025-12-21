@@ -1,13 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CheckCircle, XCircle, HelpCircle, RefreshCw, Trophy } from "lucide-react";
-
-import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle,} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";     // Ensure path is correct
 import { useConfettiStore } from "@/components/hooks/use-confetti-store";
+import { useQuizStore } from "@/components/hooks/use-quiz-store";
 
 type Question = {
   question: string;
@@ -17,13 +23,14 @@ type Question = {
 };
 
 interface StudentQuizProps {
-  quizData: any; // Using any for the raw JSON, we'll cast it
+  quizData: any; // Raw JSON from DB
 }
 
 export const StudentQuiz = ({ quizData }: StudentQuizProps) => {
   const confetti = useConfettiStore();
-  
-  // Safe cast
+  const { setIsQuizCompleted } = useQuizStore();
+
+  // Safe cast quiz data
   const questions = (Array.isArray(quizData) ? quizData : []) as Question[];
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -31,6 +38,11 @@ export const StudentQuiz = ({ quizData }: StudentQuizProps) => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
+
+  // 1. Reset global store state when component mounts or data changes
+  useEffect(() => {
+    setIsQuizCompleted(false);
+  }, [setIsQuizCompleted, quizData]);
 
   // If no quiz exists, don't render anything
   if (!questions || questions.length === 0) return null;
@@ -48,7 +60,7 @@ export const StudentQuiz = ({ quizData }: StudentQuizProps) => {
     const isCorrect = selectedOption === currentQuestion.correctAnswer;
     if (isCorrect) {
       setScore((prev) => prev + 1);
-      confetti.onOpen(); // Confetti for every correct answer (optional)
+      confetti.onOpen(); 
     }
     setIsAnswered(true);
   };
@@ -60,6 +72,7 @@ export const StudentQuiz = ({ quizData }: StudentQuizProps) => {
       setIsAnswered(false);
     } else {
       setShowScore(true);
+      setIsQuizCompleted(true); // ✅ Unlock the 'Mark as Read' button
     }
   };
 
@@ -69,6 +82,7 @@ export const StudentQuiz = ({ quizData }: StudentQuizProps) => {
     setSelectedOption(null);
     setIsAnswered(false);
     setShowScore(false);
+    setIsQuizCompleted(false); // Re-lock until finished again
   };
 
   if (showScore) {
